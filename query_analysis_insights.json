@@ -462,7 +462,8 @@
                 "value": 80
               }
             ]
-          }
+          },
+          "unit": "s"
         },
         "overrides": []
       },
@@ -971,36 +972,7 @@
           "displayName": "${__field.labels.total_load_sec}",
           "mappings": []
         },
-        "overrides": [
-          {
-            "__systemRef": "hideSeriesFrom",
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exclude",
-                "names": [
-                  "total_load_sec",
-                  "skip-grants user",
-                  "percona",
-                  "unknown",
-                  "user"
-                ],
-                "prefix": "All except:",
-                "readOnly": true
-              }
-            },
-            "properties": [
-              {
-                "id": "custom.hideFrom",
-                "value": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": true
-                }
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "gridPos": {
         "h": 8,
@@ -1183,24 +1155,6 @@
   "templating": {
     "list": [
       {
-        "current": {
-          "text": [
-            "$__all"
-          ],
-          "value": [
-            "$__all"
-          ]
-        },
-        "description": "Query to chose from qan for filtering",
-        "includeAll": true,
-        "label": "query id",
-        "multi": true,
-        "name": "queryid",
-        "options": [],
-        "query": "",
-        "type": "custom"
-      },
-      {
         "allowCustomValue": false,
         "current": {},
         "datasource": {
@@ -1229,6 +1183,6 @@
   "timezone": "utc",
   "title": "Query Analysis and Insights",
   "uid": "kvnw85my8s2ql",
-  "version": 9,
+  "version": 12,
   "weekStart": ""
 }
