@@ -64,7 +64,7 @@
       }
     ]
   },
-  "description": "Query Analysis and Insights",
+  "description": "Query Analysis and Insights ",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
@@ -296,9 +296,9 @@
               "table": ""
             }
           },
-          "pluginVersion": "4.12.0",
+          "pluginVersion": "4.10.2",
           "queryType": "timeseries",
-          "rawSql": "SELECT\n    period_start AS time,\n    multiIf(\n        fingerprint ILIKE 'SELECT%', 'Read (Select)',\n        fingerprint ILIKE 'INSERT%', 'Write (Insert)',\n        fingerprint ILIKE 'UPDATE%', 'Write (Update)',\n        fingerprint ILIKE 'DELETE%', 'Write (Delete)',\n        'Other'\n    ) AS query_type,\n    sum(m_query_time_sum) AS total_cpu_time\nFROM pmm.metrics\nWHERE service_type = 'mysql'\n  AND $__timeFilter(period_start)\nGROUP BY time, query_type\nORDER BY time\n",
+          "rawSql": "SELECT\n    period_start AS time,\n    multiIf(\n        fingerprint ILIKE 'SELECT%', 'Read (Select)',\n        fingerprint ILIKE 'INSERT%', 'Write (Insert)',\n        fingerprint ILIKE 'UPDATE%', 'Write (Update)',\n        fingerprint ILIKE 'DELETE%', 'Write (Delete)',\n        'Other'\n    ) AS query_type,\n    sum(m_query_time_sum) AS total_cpu_time\nFROM pmm.metrics\nWHERE service_type = 'mysql'\n  AND $__timeFilter(period_start)\n  AND (service_name = '' OR service_name = '$service_name')\nGROUP BY time, query_type\nORDER BY time\n",
           "refId": "A"
         }
       ],
@@ -397,7 +397,7 @@
               "table": ""
             }
           },
-          "pluginVersion": "4.12.0",
+          "pluginVersion": "4.10.2",
           "queryType": "timeseries",
           "rawSql": "SELECT\n    period_start AS time,\n    m_query_time_max AS max_latency\nFROM pmm.metrics\nWHERE service_type = 'mysql'\n  AND (service_name = '' OR service_name = '$service_name')\n  AND $__timeFilter(period_start)\nORDER BY time",
           "refId": "A"
@@ -507,7 +507,7 @@
           },
           "pluginVersion": "4.10.2",
           "queryType": "timeseries",
-          "rawSql": "SELECT\n    period_start AS time,\n    sum(m_query_time_sum) / sum(m_query_time_cnt) AS avg_latency,\n    max(m_query_time_sum) AS max_latency\nFROM pmm.metrics\nWHERE service_type = 'mysql'\n  AND (service_name = '' OR service_name = '$service_name')\n  AND $__timeFilter(period_start)\nGROUP BY time\nORDER BY time\n",
+          "rawSql": "SELECT\n    period_start AS time,\n    sum(m_query_time_sum) / sum(m_query_time_cnt) AS avg_latency,\n    max(m_query_time_max) AS max_latency\nFROM pmm.metrics\nWHERE service_type = 'mysql'\n  AND (service_name = '' OR service_name = '$service_name')\n  AND $__timeFilter(period_start)\nGROUP BY time\nORDER BY time\n",
           "refId": "A"
         }
       ],
@@ -553,10 +553,6 @@
             "steps": [
               {
                 "color": "green"
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           }
@@ -609,7 +605,7 @@
           },
           "pluginVersion": "4.10.2",
           "queryType": "timeseries",
-          "rawSql": "SELECT\n    left(fingerprint, 80) AS query_text,\n    fingerprint as full_query_text,\n    sum(m_tmp_disk_tables_sum) AS disk_tables_created\nFROM pmm.metrics\nWHERE service_type = 'mysql'\n  AND $__timeFilter(period_start)\nGROUP BY fingerprint\nHAVING disk_tables_created > 0\nORDER BY disk_tables_created DESC\nLIMIT 10",
+          "rawSql": "SELECT\n    left(fingerprint, 80) AS query_text,\n    fingerprint as full_query_text,\n    sum(m_tmp_disk_tables_sum) AS disk_tables_created\nFROM pmm.metrics\nWHERE service_type = 'mysql'\n  AND $__timeFilter(period_start)\n  AND (service_name = '' OR service_name = '$service_name')\nGROUP BY fingerprint\nHAVING disk_tables_created > 0\nORDER BY disk_tables_created DESC\nLIMIT 10",
           "refId": "A",
           "datasource": {
             "type": "grafana-clickhouse-datasource",
@@ -947,7 +943,7 @@
           },
           "pluginVersion": "4.10.2",
           "queryType": "timeseries",
-          "rawSql": "SELECT\n  period_start AS time,\n  sum(num_queries_with_errors)\n    / NULLIF(sum(num_queries), 0) AS error_rate\nFROM pmm.metrics\nWHERE service_type = 'mysql'\n  AND $__timeFilter(period_start)\nGROUP BY time\nORDER BY time;\n",
+          "rawSql": "SELECT\n  period_start AS time,\n  sum(num_queries_with_errors)\n    / NULLIF(sum(num_queries), 0) AS error_rate\nFROM pmm.metrics\nWHERE service_type = 'mysql'\n  AND $__timeFilter(period_start)\n  AND (service_name = '' OR service_name = '$service_name')\nGROUP BY time\nORDER BY time;\n",
           "refId": "A"
         }
       ],
@@ -1174,7 +1170,7 @@
           },
           "pluginVersion": "4.10.2",
           "queryType": "timeseries",
-          "rawSql": "SELECT\n  period_start AS time,\n  concat('Host: ', if(client_host = '', 'unknown', client_host)) AS series,\n  sum(m_query_time_cnt) AS query_count\nFROM pmm.metrics\nWHERE service_type = 'mysql'\n  AND $__timeFilter(period_start)\nGROUP BY time, series\nORDER BY time;\n",
+          "rawSql": "SELECT\n  period_start AS time,\n  concat('Host: ', if(client_host = '', 'unknown', client_host)) AS series,\n  sum(m_query_time_cnt) AS query_count\nFROM pmm.metrics\nWHERE service_type = 'mysql'\n  AND $__timeFilter(period_start)\n  AND (service_name = '' OR service_name = '$service_name')\nGROUP BY time, series\nORDER BY time;\n",
           "refId": "A"
         }
       ],
@@ -1233,6 +1229,6 @@
   "timezone": "utc",
   "title": "Query Analysis and Insights",
   "uid": "kvnw85my8s2ql",
-  "version": 2,
+  "version": 9,
   "weekStart": ""
 }
